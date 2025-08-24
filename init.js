@@ -13,21 +13,6 @@ const NOTE = {
     "B": 11
 }; // midi value = NOTE["C"]+12*octave
 
-const majorChordProg = {
-    // sequence of chord qualities in the progression
-    headers: ["Major", "Minor", "Minor", "Major", "Major", "Minor", "Diminished"],
-    // root progressions of the chord progression
-    rows: [
-        ["A", "B", "C#", "D", "E", "F#", "G#"],
-        ["B", "C#", "D#", "E", "F#", "G#", "A#"],
-        ["C", "D", "E", "F", "G", "A", "B"],
-        ["D", "E", "F#", "G", "A", "B", "C#"],
-        ["E", "F#", "G#", "A", "B", "C#", "D#"],
-        ["F", "G", "A", "Bb", "C", "D", "E"],
-        ["G", "A", "B", "C", "D", "E", "F#"]
-    ]
-}
-
 // returns notes of a chord based on root and quality
 const chord = (root, quality) => {
     const semitones = 12;  // 12 ko 15 se replace krdo agar next octave ke notes consider krne hai for a chord
@@ -43,6 +28,21 @@ const chord = (root, quality) => {
         default:
             return [];
     }
+}
+
+const majorChordProg = {
+    // sequence of chord qualities in the progression
+    headers: ["Major", "Minor", "Minor", "Major", "Major", "Minor", "Diminished"],
+    // root progressions of the chord progression
+    rows: [
+        ["A", "B", "C#", "D", "E", "F#", "G#"],
+        ["B", "C#", "D#", "E", "F#", "G#", "A#"],
+        ["C", "D", "E", "F", "G", "A", "B"],
+        ["D", "E", "F#", "G", "A", "B", "C#"],
+        ["E", "F#", "G#", "A", "B", "C#", "D#"],
+        ["F", "G", "A", "Bb", "C", "D", "E"],
+        ["G", "A", "B", "C", "D", "E", "F#"]
+    ]
 }
 
 const stringToElement = (html) => {
