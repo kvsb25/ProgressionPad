@@ -45,32 +45,130 @@ const majorChordProg = {
     ]
 }
 
-const stringToElement = (html) => {
-    const template = document.createElement('template');
-    console.log(html.trim());
-    template.innerHTML = html.trim();
-    console.log(template.content.firstElementChild);
-    return template.content.firstElementChild;
+// const stringToElement = (html) => {
+//     const template = document.createElement('template');
+//     console.log(html.trim());
+//     template.innerHTML = html.trim();
+//     console.log(template.content.firstElementChild);
+//     return template.content.firstElementChild;
+// }
+
+// const renderComponent = (containerClass, component, data) => {
+//     const container = document.getElementsByClassName(`${containerClass}`)[0];
+//     container.innerHTML = '';
+//     container.appendChild(stringToElement(component(data)));
+// }
+
+// const components = {
+//     pads: (progression) => {
+//         let headerRow = progression.headers.reduce((acc, curr) => acc + `<th data-quality="${curr}">${curr}</th>`, '');
+//         let rows = progression.rows.reduce((acc, ele) => {
+//             let rowData = ele.reduce((acc, curr) => acc + `<td data-root="${curr}">${curr}</td>`, '');
+//             let temp = `<tr>${rowData}</tr>`;
+//             return acc + temp;
+//         }, '');
+//         return `<table class="pad-table"><thead>${headerRow}</thead><tbody>${rows}</tbody></table>`;
+//     }
+// }
+
+// renderComponent('pads', components.pads, majorChordProg);
+
+// // console.log(chord("C", "major"));
+// class Component {
+//     // static html;
+
+//     stringToElement() {
+//         let html = Component._html;
+//         const template = document.createElement('template');
+//         console.log(html.trim());
+//         template.innerHTML = html.trim();
+//         console.log(template.content.firstElementChild);
+//         return template.content.firstElementChild;
+//     }
+
+//     renderComponent(containerClass, component, data) {
+//         const container = document.getElementsByClassName(`${containerClass}`)[0];
+//         container.innerHTML = '';
+//         container.appendChild(stringToElement(component(data)));
+//     }
+// }
+
+// class Pads extends Component {
+//     static _html;
+//     static _progression;
+
+//     set progression({ headers, rows }) {
+//         this.progression = {
+//             headers,
+//             rows
+//         }
+//     }
+
+//     set html(html) {
+//         this.html = html;
+//     }
+
+//     constructor({ headers, rows }) {
+//         this._progression = { headers, rows };
+//         this._html = this.#characteristics(this._progression);
+//     }
+
+//     #characteristics(progression) {
+//         let headerRow = progression.headers.reduce((acc, curr) => acc + `<th data-quality="${curr}">${curr}</th>`, '');
+//         let rows = progression.rows.reduce((acc, ele) => {
+//             let rowData = ele.reduce((acc, curr) => acc + `<td data-root="${curr}">${curr}</td>`, '');
+//             let temp = `<tr>${rowData}</tr>`;
+//             return acc + temp;
+//         }, '');
+//         return `<table class="pad-table"><thead>${headerRow}</thead><tbody>${rows}</tbody></table>`;
+//     }
+// }
+
+class Component {
+    constructor(props = {}) {
+        this.props = props;
+        this._html = this.getTemplate(props);
+    }
+
+    getTemplate(props) {
+        throw new Error("Child classes must implement getTemplate(props)");
+    }
+
+    renderComponent() {
+        if (!this.props.className) {
+            throw new Error("Component requires a className prop");
+        }
+
+        const container = document.getElementsByClassName(`${this.props.className}`)[0];
+        if (!container) {
+            throw new Error(`Container with class '${this.props.className}' not found`);
+        }
+        container.innerHTML = '';
+        container.appendChild(this._stringToElement(this._html));
+    }
+
+    _stringToElement(html) {
+        const template = document.createElement('template');
+        console.log(html.trim());
+        template.innerHTML = html.trim();
+        console.log(template.content.firstElementChild);
+        return template.content.firstElementChild;
+    }
 }
 
-const renderComponent = (containerClass, component, data) => {
-    const container = document.getElementsByClassName(`${containerClass}`)[0];
-    container.innerHTML = '';
-    container.appendChild(stringToElement(component(data)));
-}
+class Pad extends Component {
+    getTemplate(props) {
+        const { className, progression } = props;
+        if (!progression) {
+            throw new Error("Component requires a progression in prop");
+        }
 
-const components = {
-    pads: (progression) => {
         let headerRow = progression.headers.reduce((acc, curr) => acc + `<th data-quality="${curr}">${curr}</th>`, '');
         let rows = progression.rows.reduce((acc, ele) => {
             let rowData = ele.reduce((acc, curr) => acc + `<td data-root="${curr}">${curr}</td>`, '');
             let temp = `<tr>${rowData}</tr>`;
             return acc + temp;
         }, '');
-        return `<table class="pad-table"><thead>${headerRow}</thead><tbody>${rows}</tbody></table>`;
+        return `<table class="${className}"><thead>${headerRow}</thead><tbody>${rows}</tbody></table>`;
     }
 }
-
-renderComponent('pads', components.pads, majorChordProg);
-
-// console.log(chord("C", "major"));
