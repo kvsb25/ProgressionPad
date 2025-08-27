@@ -57,24 +57,22 @@
         <div class="controls">
             <div class="harmonics">
                 <div class="octave">
-                    <input type="number" name="octave" id="octave" step="1" min="-1" max="9" value="3">
+                    <input type="number" name="octave" id="octave" step="1" min="-1" max="9" value="2">
                 </div>
                 <div class="progression">
                     <select name="progression" id="progression">
-                        <option value="major">Major</option>
+                        <option value="major" selected>Major</option>
                         <option value="minor">Minor</option>
                     </select>
                 </div>
             </div>
-            <div class="velocity">
-                <input name="velocity" type="range" min="0" max="127" step="1" value="127">
-            </div>
         </div>
         
-        <div class="pads">
+        <div class="pads" id="padTable">
         </div>
     </div>
     <script src="init.js"></script>
-    <script src="popup.js"></script>
+    <!-- <script src="popup.js"></script> -->
+    <script src="app.js"></script>
 </body>
 </html>
