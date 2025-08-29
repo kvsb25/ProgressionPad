@@ -1,21 +1,8 @@
-// const NOTE = {
-//     "C": 0,
-//     "C#": 1,
-//     "D": 2,
-//     "D#": 3,
-//     "E": 4,
-//     "F": 5,
-//     "F#": 6,
-//     "G": 7,
-//     "G#": 8,
-//     "A": 9,
-//     "A#": 10,
-//     "B": 11
-// }; // midi value = NOTE["C"]+12*octave
-
 const majorChordProg = {
+
     // sequence of chord qualities in the progression
     headers: ["Major", "Minor", "Minor", "Major", "Major", "Minor", "Diminished"],
+
     // root progressions of the chord progression
     rows: [
         ["A", "B", "C#", "D", "E", "F#", "G#"],
@@ -29,7 +16,9 @@ const majorChordProg = {
 }
 
 const minorChordProg = {
+
     headers: ["Minor", "Diminished", "Major", "Minor", "Minor", "Major", "Major"],
+
     rows: [
         ["A", "B", "C", "D", "E", "F", "G"],
         ["B", "C#", "D", "E", "F#", "G", "A"],
@@ -42,13 +31,14 @@ const minorChordProg = {
 }
 
 class Component {
+
     constructor(props = {}) {
         this.props = props;
-        this._html = this.getTemplate(props);
+        this._html = this.template(props);
     }
 
-    getTemplate(props) {
-        throw new Error("Child classes must implement getTemplate(props)");
+    template(props) {
+        throw new Error("Child classes must implement template(props)");
     }
 
     renderComponent() {
@@ -72,7 +62,8 @@ class Component {
 }
 
 class Pad extends Component {
-    getTemplate(props) {
+
+    template(props) {
         const { progression } = props;
         if (!progression) {
             throw new Error("Component requires a progression in prop");

@@ -91,25 +91,34 @@ class ChordGenerator {
     static NOTE_MAP = new Map([
         ["C", 0],
         ["C#", 1],
+        ["DB", 1],
         ["D", 2],
         ["D#", 3],
+        ["EB", 3],
         ["E", 4],
         ["F", 5],
         ["F#", 6],
+        ["GB", 6],
         ["G", 7],
         ["G#", 8],
+        ["AB", 8],
         ["A", 9],
         ["A#", 10],
+        ["BB", 10],
         ["B", 11]
     ]); // midi value = NOTE+12*octave
 
-    getChord({ root, quality }) {
+    generateChord({ root, quality }) {
+
         const semitones = 24;  // 24 full range chords
+
         root = root.toUpperCase();
         quality = quality.toLowerCase();
+
         console.log("Root: ", root, " Quality: ", quality);
         const rootNote = ChordGenerator.NOTE_MAP.get(root);
         console.log(rootNote);
+
         switch (quality) {
             case "major":
                 return [rootNote, (rootNote + 4) % semitones, (rootNote + 7) % semitones];
@@ -122,10 +131,11 @@ class ChordGenerator {
         }
     }
 
-    getRootQuality(/*event, */cell) {
-        // const cell = event.target;
+    getRootQuality(cell) {
+
         console.log(cell);
         const root = cell.getAttribute('data-root');
+        console.log("root: ", root);
 
         const row = cell.parentNode;
         const cellIndexInRow = Array.from(row.children).indexOf(cell);
@@ -134,16 +144,37 @@ class ChordGenerator {
 
         return { root, quality };
     }
+
+    getChord(cell) {
+        return this.generateChord(this.getRootQuality(cell));
+    }
 } // this class resolves the abstraction of chords and notes as String/character to their number representation so that we can leverage Transmitter to commuincate with the Virtual MIDI Port to play those chords and notes 
 
 class Initializer {
     static chordGenerator = new ChordGenerator();
     static transmitter = new Transmitter();
-    static octave = 2;
-    static velocity = 127;
-    static ProgressionPads = {
-        major: new Pad({ containerClass: "pads", progression: majorChordProg }),
-        minor: new Pad({ containerClass: "pads", progression: minorChordProg })
+    static MIDIConfig = {
+        octave: 2,
+        velocity: 127,
+        ProgressionPads: {
+            major: new Pad({ containerClass: "pads", progression: majorChordProg }),
+            minor: new Pad({ containerClass: "pads", progression: minorChordProg })
+        },
+        keyboardConfig: {
+            keys: new Map([
+                ["KeyA", 0],
+                ["KeyS", 1],
+                ["KeyD", 2],
+                ["KeyF", 3],
+                ["KeyG", 4],
+                ["KeyH", 5],
+                ["KeyJ", 6],
+                ["KeyK", 7],
+            ]),
+            KeyboardRadios: document.querySelectorAll('input[type="radio"]'),
+            checkedRow: KeyboardRadios.find(radio => (radio.checked)),
+            siblings: Array.from(this.MIDIConfig.keyboardConfig.checkedRow.parentElement.children).find(sib => sib != this.MIDIConfig.keyboardConfig.checkedRow),
+        },
     }
 
     constructor(padContainerId, octaveInputId, progressionSelectId) {
@@ -151,18 +182,27 @@ class Initializer {
     }
 
     static initialize(padContainerId, octaveInputId, progressionSelectId) {
+
         if (typeof padContainerId != "string" || typeof octaveInputId != "string") {
             throw new Error('Container ID or(and) Octave Input ID must be of type "string" : class Initializer{ static initialize(containerId) }');
         }
+
         //render components on the page
         this.#renderComponents();
+
         //initialize handlers for Controller Elements
         this.#intializeControllerInput(octaveInputId, progressionSelectId);
+
         //initialize handlers for Pad interaction
         this.#initializePadInput(padContainerId);
+
+        //initialize keyboard input
+        this.#initializeKeyboardInput();
     }
+
     //initialize handlers for Controller Elements
     static #intializeControllerInput(octaveInputId, progressionSelectId) {
+
         const octaveInput = document.getElementById(octaveInputId);
         const select = document.getElementById(progressionSelectId);
 
@@ -171,41 +211,67 @@ class Initializer {
         });
 
         select.addEventListener('change', (event) => {
-            this.ProgressionPads[event.target.value].renderComponent();
+            this.MIDIConfig.ProgressionPads[event.target.value].renderComponent();
         });
-        
+
         this.#setOctave(octaveInput.value); //set octave value
     }
 
     //initialize handlers for Pad interaction
     static #initializePadInput(containerId) {
+
         const container = document.getElementById(containerId);
+
         container.addEventListener('click', (event) => {
+
             if (event.target.getAttribute('data-root')) {
-                console.log(event.target);
-                // let {root, quality} = this.chordGenerator.getRootQuality(event.target);
-                // console.log("Root: ", root, " Quality: ", quality);
-                // let chord = this.chordGenerator.getChord({root, quality});
-                let chord = this.chordGenerator.getChord(this.chordGenerator.getRootQuality(event.target));
-                console.log(chord);
-                chord = chord.map(note => note + 12 * this.octave);
-                console.log(chord);
+
+                console.log(typeof event.target);
+                const cell = event.target;
+                console.log(typeof cell);
+
+                let chord = this.#MIDIMessageChord(cell);
+
                 this.#play(chord);
                 setTimeout(() => { this.#stop(chord) }, 1000);
             }
         });
     }
 
+    static #initializeKeyboardInput() {
+
+        this.MIDIConfig.keyboardConfig.checkedRow = KeyboardRadios.find(radio => (radio.checked));
+        const checkedRow = this.MIDIConfig.keyboardConfig.checkedRow;
+        this.MIDIConfig.keyboardConfig.siblings = Array.from(checkedRow.parentElement.children).find(sib => sib != checkedRow);
+        const siblings = this.MIDIConfig.keyboardConfig.siblings;
+
+
+        const keys = this.MIDIConfig.keyboardConfig.keys;
+
+        document.addEventListener('keydown', (event) => {
+            const cell = siblings[keys.get(event.code)]
+            const chord = this.#MIDIMessageChord(cell);
+            this.#play(chord);
+        });
+
+        document.addEventListener('keyup', (event) => {
+            const cell = siblings[keys.get(event.code)]
+            const chord = this.#MIDIMessageChord(cell);
+            this.#stop(chord);
+        });
+    }
+
     static #renderComponents() {
-        this.ProgressionPads.major.renderComponent();
+        this.MIDIConfig.ProgressionPads.major.renderComponent();
     }
 
     static #setOctave(newOctave) {
-        this.octave = newOctave;
+        newOctave = Number(newOctave);
+        this.MIDIConfig.octave = newOctave;
     }
 
     static #setVelocity(newVelocity) {
-        this.velocity = newVelocity;
+        this.MIDIConfig.velocity = newVelocity;
     }
 
     static #play(chord) {
@@ -220,6 +286,18 @@ class Initializer {
             throw new Error('Chord must be of type "object" to be playable : class Initializer{ static stop(chord) }');
         }
         Array.from(chord).forEach(note => this.transmitter.stop(note));
+    }
+
+    static #MIDIMessageChord(cell) {
+
+        let chord = this.chordGenerator.getChord(cell);
+
+        console.log("chord: ", chord, " octave: ", this.MIDIConfig.octave + 1);
+
+        chord = chord.map(note => note + 12 * (this.MIDIConfig.octave + 1));
+        console.log(chord);
+
+        return chord;
     }
 }
 
