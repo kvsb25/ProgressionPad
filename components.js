@@ -71,10 +71,11 @@ class Pad extends Component {
 
         let headerRow = progression.headers.reduce((acc, curr) => acc + `<th data-quality="${curr}">${curr}</th>`, '');
         let rows = progression.rows.reduce((acc, ele) => {
+
             let rowData = ele.reduce((acc, curr) => acc + `<td data-root="${curr}">${curr}</td>`, '');
-            let temp = `<tr>${rowData}</tr>`;
+            let temp = `<tr><td><input type="radio" name="keyboard"></td>${rowData}</tr>`;
             return acc + temp;
         }, '');
-        return `<table class=pad-table><thead>${headerRow}</thead><tbody>${rows}</tbody></table>`;
+        return `<table class=pad-table><thead><th></th>${headerRow}</thead><tbody>${rows}</tbody></table>`;
     }
 }

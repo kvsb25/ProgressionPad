@@ -69,6 +69,7 @@ class Connection {
 }
 
 class Transmitter {
+    static #statusSustain = 0xB0;
     static #statusOn = 0x90;
     static #statusOff = 0x80;
     static #velocity = 127;
@@ -82,7 +83,7 @@ class Transmitter {
     }
 
     async stop(note) {
-        await Connection.send(Transmitter.#statusOff, note, 0);
+        await Connection.send(Transmitter.#statusOn, note, 0);
     }
 }
 
@@ -160,21 +161,20 @@ class Initializer {
             major: new Pad({ containerClass: "pads", progression: majorChordProg }),
             minor: new Pad({ containerClass: "pads", progression: minorChordProg })
         },
-        keyboardConfig: {
-            keys: new Map([
-                ["KeyA", 0],
-                ["KeyS", 1],
-                ["KeyD", 2],
-                ["KeyF", 3],
-                ["KeyG", 4],
-                ["KeyH", 5],
-                ["KeyJ", 6],
-                ["KeyK", 7],
-            ]),
-            KeyboardRadios: document.querySelectorAll('input[type="radio"]'),
-            checkedRow: KeyboardRadios.find(radio => (radio.checked)),
-            siblings: Array.from(this.MIDIConfig.keyboardConfig.checkedRow.parentElement.children).find(sib => sib != this.MIDIConfig.keyboardConfig.checkedRow),
-        },
+    }
+    static keyboardConfig = {
+        keys: new Map([
+            ["KeyA", 0],
+            ["KeyS", 1],
+            ["KeyD", 2],
+            ["KeyF", 3],
+            ["KeyG", 4],
+            ["KeyH", 5],
+            ["KeyJ", 6]
+        ]),
+        keyboardRadios: document.querySelectorAll('input[type="radio"]'),
+        checkedRow: null,
+        siblings: null,
     }
 
     constructor(padContainerId, octaveInputId, progressionSelectId) {
@@ -240,25 +240,65 @@ class Initializer {
 
     static #initializeKeyboardInput() {
 
-        this.MIDIConfig.keyboardConfig.checkedRow = KeyboardRadios.find(radio => (radio.checked));
-        const checkedRow = this.MIDIConfig.keyboardConfig.checkedRow;
-        this.MIDIConfig.keyboardConfig.siblings = Array.from(checkedRow.parentElement.children).find(sib => sib != checkedRow);
-        const siblings = this.MIDIConfig.keyboardConfig.siblings;
+        this.#radioBtnInitializer();
+        this.#keyboardInitializer();
+        
+    }
 
-
-        const keys = this.MIDIConfig.keyboardConfig.keys;
-
+    static #keyboardInitializer() {
+        
+        const keys = this.keyboardConfig.keys;
+        let isKeydown = false;
         document.addEventListener('keydown', (event) => {
-            const cell = siblings[keys.get(event.code)]
-            const chord = this.#MIDIMessageChord(cell);
-            this.#play(chord);
+
+            console.log(event.code);
+            console.log(keys.get(event.code));
+
+            console.log(!(keys.get(event.code)));
+            if (!(keys.get(event.code)) && keys.get(event.code) != 0) {
+                return
+            }
+            console.log("isKeydown ", isKeydown)
+            if (!isKeydown) {
+                isKeydown = true;
+                const cell = this.keyboardConfig.siblings[keys.get(event.code)];
+                console.log(cell, "in keyboardinit");
+                const chord = this.#MIDIMessageChord(cell);
+                this.#play(chord);
+            }
         });
 
         document.addEventListener('keyup', (event) => {
-            const cell = siblings[keys.get(event.code)]
+            console.log(event.code);
+
+            console.log(!(keys.get(event.code)));
+            if (!(keys.get(event.code)) && keys.get(event.code) != 0) {
+                return
+            }
+
+            isKeydown = false;
+            const cell = this.keyboardConfig.siblings[keys.get(event.code)];
+            console.log(cell, "in keyup keyboard init");
             const chord = this.#MIDIMessageChord(cell);
             this.#stop(chord);
         });
+    }
+
+    static #radioBtnInitializer() {
+        const radios = this.keyboardConfig.keyboardRadios = document.querySelectorAll('input[type="radio"]');
+        console.log(radios);
+        radios[0].setAttribute('checked', true);
+
+        const checkedRow = this.keyboardConfig.checkedRow = Array.from(radios).find(radio => (radio.checked));
+        console.log(checkedRow);
+        console.log(checkedRow.parentElement.parentElement);
+        const siblings = this.keyboardConfig.siblings = Array.from(checkedRow.parentElement.parentElement.children).filter((sib, idx) => idx != 0);
+        console.log(siblings);
+
+        radios.forEach(radio => radio.addEventListener('change', () => {
+            const checkedRow = this.keyboardConfig.checkedRow = Array.from(radios).find(radio => (radio.checked));
+            this.keyboardConfig.siblings = Array.from(checkedRow.parentElement.parentElement.children).filter((sib, idx) => idx != 0);
+        }));
     }
 
     static #renderComponents() {
@@ -282,9 +322,10 @@ class Initializer {
     }
 
     static #stop(chord) {
-        if (!Array.isArray(chord)) {
-            throw new Error('Chord must be of type "object" to be playable : class Initializer{ static stop(chord) }');
-        }
+
+        // if (!Array.isArray(chord)) {
+        //     throw new Error('Chord must be of type "object" to be playable : class Initializer{ static stop(chord) }');
+        // }
         Array.from(chord).forEach(note => this.transmitter.stop(note));
     }
 
