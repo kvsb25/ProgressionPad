@@ -50,6 +50,7 @@ class Component {
         if (!container) {
             throw new Error(`Container with class '${this.props.containerClass}' not found`);
         }
+        
         container.innerHTML = '';
         container.appendChild(this._stringToElement(this._html));
     }

@@ -1,0 +1,382 @@
+/* Ultra Dark Theme for Chord Progression Pad */
+
+body{
+    background-color: #222;
+}
+
+/* Main container styling - responsive sizing */
+.main {
+    min-height: 500px;
+    min-width: 600px;
+    width: fit-content;
+    height: fit-content;
+    max-width: 90vw;
+    max-height: 90vh;
+    background: #0a0a0a;
+    border: 2px solid #111;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: auto;
+}
+
+/* Controls section - flexible sizing */
+.controls {
+    width: 20%;
+    min-width: 120px;
+    max-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.harmonics {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.harmonics > div {
+    margin: 0;
+}
+
+/* Form controls styling */
+.octave input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    background: #050505;
+    border: 1px solid #222;
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.octave input[type="number"]:focus {
+    outline: none;
+    border-color: #2196f3;
+    background: #080808;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.octave input[type="number"]:hover {
+    border-color: #333;
+    background: #080808;
+}
+
+.progression select {
+    width: 100%;
+    padding: 8px 12px;
+    background: #050505;
+    border: 1px solid #222;
+    border-radius: 6px;
+    color: #ccc;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding-right: 32px;
+}
+
+.progression select:focus {
+    outline: none;
+    border-color: #2196f3;
+    background-color: #080808;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.progression select:hover {
+    border-color: #333;
+    background-color: #080808;
+}
+
+/* Pads container - flexible sizing */
+.pads {
+    min-height: 400px;
+    height: auto;
+    width: 75%;
+    min-width: 450px;
+    background: #050505;
+    border: 2px solid #111;
+    border-radius: 8px;
+    padding: 8px;
+    overflow: auto;
+    flex-grow: 1;
+}
+
+/* Pad table styling - responsive sizing */
+.pad-table {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    min-height: 100%;
+    border-collapse: collapse;
+    background: #0a0a0a;
+    border-radius: 8px;
+    overflow: visible;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    font-family: inherit;
+}
+
+/* Header styling - flexible sizing */
+.pad-table thead th {
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #999;
+    border-bottom: 2px solid #1a1a1a;
+    border-right: 1px solid #111;
+    position: relative;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.pad-table thead th:first-child {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    background: #060606;
+    border-right: 2px solid #111;
+}
+
+.pad-table thead th:last-child {
+    border-right: none;
+}
+
+/* Quality-specific header colors */
+.pad-table thead th[data-quality="Major"] {
+    color: #2196f3;
+    border-bottom-color: #2196f3;
+}
+
+.pad-table thead th[data-quality="Minor"] {
+    color: #7b1fa2;
+    border-bottom-color: #7b1fa2;
+}
+
+.pad-table thead th[data-quality="Diminished"] {
+    color: #d84315;
+    border-bottom-color: #d84315;
+}
+
+/* Body rows - moved styling here */
+.pad-table tbody tr {
+    transition: all 0.15s ease;
+    border-bottom: 1px solid #111;
+    background: #050505;
+}
+
+.pad-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.008);
+    transform: translateY(-0.5px);
+}
+
+.pad-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+/* Add header background back */
+.pad-table thead {
+    background: #0f0f0f;
+    position: relative;
+    top: 0;
+    z-index: 10;
+}
+
+/* Radio button column - flexible sizing */
+.pad-table tbody td:first-child {
+    padding: 10px 8px;
+    text-align: center;
+    background: #030303;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    border-right: 2px solid #111;
+}
+
+.pad-table tbody td:first-child input[type="radio"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #2196f3;
+    cursor: pointer;
+}
+
+/* Chord cells - flexible sizing */
+.pad-table tbody td[data-root] {
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    border-right: 1px solid #111;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.pad-table tbody td[data-root]:last-child {
+    border-right: none;
+}
+
+.pad-table tbody td[data-root]:hover {
+    background: rgba(33, 150, 243, 0.05);
+    color: #2196f3;
+    transform: scale(1.02);
+    font-weight: 600;
+}
+
+/* Active/selected state - using JavaScript classes instead of :has() */
+.pad-table tbody tr.selected {
+    background: rgba(33, 150, 243, 0.02);
+    border-color: rgba(33, 150, 243, 0.3);
+    box-shadow: inset 2px 0 0 #2196f3;
+}
+
+.pad-table tbody tr.selected td[data-root] {
+    color: #2196f3;
+    font-weight: 600;
+}
+
+/* Responsive adjustments for container size */
+@media (max-width: 800px) {
+    .main {
+        min-width: 500px;
+        width: 95%;
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    
+    .controls {
+        width: 100%;
+        max-width: none;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    
+    .harmonics {
+        flex-direction: row;
+        gap: 16px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .pads {
+        width: 100%;
+        min-width: auto;
+        height: auto;
+        min-height: 350px;
+        flex-grow: 1;
+    }
+    
+    .pad-table thead th,
+    .pad-table tbody td[data-root] {
+        padding: 8px 6px;
+        font-size: 11px;
+        min-width: 50px;
+    }
+    
+    .pad-table tbody td:first-child,
+    .pad-table thead th:first-child {
+        width: 35px;
+        min-width: 35px;
+        max-width: 35px;
+    }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1200px) {
+    .main {
+        max-width: 1200px;
+        max-height: 800px;
+    }
+    
+    .pads {
+        min-width: 600px;
+    }
+    
+    .pad-table thead th,
+    .pad-table tbody td[data-root] {
+        min-width: 80px;
+        padding: 14px 12px;
+        font-size: 14px;
+    }
+    
+    .pad-table tbody td:first-child,
+    .pad-table thead th:first-child {
+        width: 50px;
+        min-width: 50px;
+        max-width: 50px;
+    }
+}
+
+/* Scrollbar styling */
+.pads::-webkit-scrollbar,
+.pad-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.pads::-webkit-scrollbar-track,
+.pad-container::-webkit-scrollbar-track {
+    background: #0a0a0a;
+    border-radius: 3px;
+}
+
+.pads::-webkit-scrollbar-thumb,
+.pad-container::-webkit-scrollbar-thumb {
+    background: #2196f3;
+    border-radius: 3px;
+}
+
+.pads::-webkit-scrollbar-thumb:hover,
+.pad-container::-webkit-scrollbar-thumb:hover {
+    background: #1976d2;
+}
+
+/* Focus states for accessibility */
+.pad-table tbody td[data-root]:focus,
+.pad-table tbody input[type="radio"]:focus,
+.octave input:focus,
+.progression select:focus {
+    outline: 2px solid #2196f3;
+    outline-offset: 1px;
+}
+
+/* Custom number input arrows styling - using standard properties */
+.octave input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Labels for better UX (if added later) */
+.octave::before {
+    content: "Octave";
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.progression::before {
+    content: "Scale";
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}

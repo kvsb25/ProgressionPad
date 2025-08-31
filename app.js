@@ -192,12 +192,16 @@ class Initializer {
 
         //initialize handlers for Controller Elements
         this.#intializeControllerInput(octaveInputId, progressionSelectId);
-
+        
         //initialize handlers for Pad interaction
         this.#initializePadInput(padContainerId);
 
         //initialize keyboard input
         this.#initializeKeyboardInput();
+    }
+    
+    static #renderComponents() {
+        this.MIDIConfig.ProgressionPads.major.renderComponent();
     }
 
     //initialize handlers for Controller Elements
@@ -209,11 +213,11 @@ class Initializer {
         octaveInput.addEventListener('change', (event) => {
             this.#setOctave(event.currentTarget.value);
         });
-
+        
         select.addEventListener('change', (event) => {
             this.MIDIConfig.ProgressionPads[event.target.value].renderComponent();
         });
-
+        
         this.#setOctave(octaveInput.value); //set octave value
     }
 
@@ -242,7 +246,7 @@ class Initializer {
 
         this.#radioBtnInitializer();
         this.#keyboardInitializer();
-        
+
     }
 
     static #keyboardInitializer() {
@@ -299,10 +303,6 @@ class Initializer {
             const checkedRow = this.keyboardConfig.checkedRow = Array.from(radios).find(radio => (radio.checked));
             this.keyboardConfig.siblings = Array.from(checkedRow.parentElement.parentElement.children).filter((sib, idx) => idx != 0);
         }));
-    }
-
-    static #renderComponents() {
-        this.MIDIConfig.ProgressionPads.major.renderComponent();
     }
 
     static #setOctave(newOctave) {
