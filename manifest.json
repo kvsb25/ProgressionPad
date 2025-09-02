@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "Cadence - MIDI Chord Controller",
+    "version": "1.0.0",
+    "description": "A virtual MIDI chord pad for playing chord progressions. Connect to your DAW via virtual MIDI ports.",
+    "permissions": [
+        "activeTab"
+    ],
+    "action": {
+        "default_popup": "popup/popup.html",
+        "default_title": "Cadence",
+        "default_icon": {
+            "16": "icons/icon.svg",
+            "32": "icons/icon.svg"
+        }
+    },
+    "icons": {
+        "16": "icons/icon.svg",
+        "32": "icons/icon.svg"
+    }
+}
