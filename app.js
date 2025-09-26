@@ -42,7 +42,7 @@ class Connection {
 
         try {
             Connection.#midi = await navigator.requestMIDIAccess();
-            Connection.#outputPort = [...Connection.#midi.outputs.values()].find(o => o.name.includes('ProgressionPadPort'));
+            Connection.#outputPort = [...Connection.#midi.outputs.values()].find(o => o.name.includes('Cadence'));
             Connection.#initialized = true;
             alert('Connected to virtual MIDI Port Successfully');
         } catch (err) {
